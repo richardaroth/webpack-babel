@@ -1,6 +1,5 @@
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
-const prod = process.argv.indexOf('-p') !== -1;
 const webpack = require('webpack');
 
 const config = {
@@ -18,26 +17,23 @@ const config = {
 				loader: 'babel-loader',
 				options: {
 					presets: [
-						['es2015', {modules: false}]
+						['@babel/preset-env', {modules: false}]
 					]
 				}
 			}]
 		},
 		{
 	        test: /\.scss$/,
-			use: ExtractTextPlugin.extract({
-				fallback: 'style-loader',
-				use: 'css-loader!sass-loader'
-			})
+			use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
 		}]
 	},
 	plugins: [
-		new ExtractTextPlugin('main.css')
+		new MiniCssExtractPlugin()
 	]
 };
 
-if (!prod) {
+if (process.env.NODE_ENV !== 'production') {
 	config.devtool = 'inline-source-map'
 }
 
-module.exports = config
+module.exports = config;
